@@ -27,7 +27,7 @@ public class Circle extends HitboxElement {
 		Point pos = new Point(this.ref).add(this.vectCenter);
 
 		g.setColor(this.COLOR);
-		g.drawOval(pos.ix() - radint, pos.iy() - radint, radM2, radM2);
+		g.fillOval(pos.ix() - radint, pos.iy() - radint, radM2, radM2);
 	}
 
 	public Point getCenter() {

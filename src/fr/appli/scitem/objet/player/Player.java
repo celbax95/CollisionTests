@@ -1,18 +1,13 @@
-package fr.appli.scitem.objet;
+package fr.appli.scitem.objet.player;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-import fr.col.AABB;
+import fr.appli.scitem.objet.Objet;
 import fr.screen.keyboard.KeyBoard;
 import fr.util.point.Point;
 
-public class Player extends Objet {
-
-	private AABB personalHitbox;
-
-	private Point size;
+public abstract class Player extends Objet {
 
 	private boolean moving;
 
@@ -22,21 +17,11 @@ public class Player extends Objet {
 
 	public Player() {
 		super();
-		this.personalHitbox = new AABB(this.pos, new Point(), new Point());
-		this.size = new Point();
 	}
 
 	public void defaultInit() {
 		this.pos.set(new Point(100, 100));
-		this.size = new Point(80, 80);
 		this.speed = 0;
-
-		Point padding = new Point(1, 1);
-
-		this.personalHitbox = new AABB(this.pos, new Point(this.pos).add(padding),
-				new Point(this.pos).add(this.size).sub(new Point(padding).mult(2)));
-		this.personalHitbox = new AABB(this.pos, this.pos, new Point(this.pos).add(this.size));
-		this.hitbox = this.personalHitbox;
 		this.moving = false;
 		this.maxSpeed = 300;
 		this.acceleration = 2000;
@@ -44,11 +29,7 @@ public class Player extends Objet {
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
-		g.setColor(new Color(200, 0, 0));
-		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
-		this.personalHitbox.draw(g);
-	}
+	public abstract void draw(Graphics2D g);
 
 	private void inputs() {
 		this.moving = false;
