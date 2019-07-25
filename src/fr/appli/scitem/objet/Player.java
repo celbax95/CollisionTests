@@ -35,6 +35,7 @@ public class Player extends Objet {
 
 		this.personalHitbox = new AABB(this.pos, new Point(this.pos).add(padding),
 				new Point(this.pos).add(this.size).sub(new Point(padding).mult(2)));
+		this.personalHitbox = new AABB(this.pos, this.pos, new Point(this.pos).add(this.size));
 		this.hitbox = this.personalHitbox;
 		this.moving = false;
 		this.maxSpeed = 300;

@@ -6,35 +6,37 @@ import fr.util.point.Point;
 
 public class Circle extends HitboxElement {
 
+	private Point ref;
+
 	private double rad;
 
-	private Point pos;
+	private Point vectCenter;
 
-	public Circle(Point pos, double rad) {
+	public Circle(Point ref, Point center, double rad) {
 		super();
-		this.pos = pos;
+		this.ref = ref;
+		this.vectCenter = new Point(center).sub(ref);
 		this.rad = rad;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		int radD2 = (int) (this.rad / 2);
+		int radint = (int) this.rad;
 		int radM2 = (int) (this.rad * 2);
+
+		Point pos = new Point(this.ref).add(this.vectCenter);
+
 		g.setColor(this.COLOR);
-		g.drawOval(this.pos.ix() - radD2, this.pos.iy() - radD2, radM2, radM2);
+		g.drawOval(pos.ix() - radint, pos.iy() - radint, radM2, radM2);
+	}
+
+	public Point getCenter() {
+		return new Point(this.ref).add(this.vectCenter);
 	}
 
 	@Override
 	public int getType() {
 		return 2;
-	}
-
-	public Point pos() {
-		return this.pos;
-	}
-
-	public void pos(Point pos) {
-		this.pos = pos;
 	}
 
 	public double rad() {
@@ -43,5 +45,9 @@ public class Circle extends HitboxElement {
 
 	public void rad(double rad) {
 		this.rad = rad;
+	}
+
+	public void setCenter(Point center) {
+		this.vectCenter = new Point(center).sub(this.ref);
 	}
 }

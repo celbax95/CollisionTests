@@ -5,7 +5,9 @@ import fr.util.point.Point;
 
 public class ColDetect {
 
-	static int cpt = 0;
+	public static double clamp(double val, double min, double max) {
+		return Math.max(min, Math.min(max, val));
+	}
 
 	public static boolean colAABBvsAABB(AABB a, AABB b, Manifold m) {
 
@@ -53,6 +55,84 @@ public class ColDetect {
 		return false;
 	}
 
+	public static boolean colAABBvsCircle(AABB a, Circle b, Manifold m) {
+		// Vector from A to B
+		Point aCenter = a.getCenter();
+		Point bCenter = b.getCenter();
+		Point amin = a.min();
+		Point amax = a.max();
+
+		Point n = new Point(b.getCenter()).sub(aCenter);
+
+		// Closest point on A to center of B
+		Point closest = new Point(n);
+
+		// Calculate half extents along each axis
+		double xExtent = (amax.x() - amin.x()) / 2;
+		double yExtent = (amax.y() - amin.y()) / 2;
+
+		// Clamp point to edges of the AABB
+		closest.x(clamp(xExtent, -xExtent, closest.x()));
+		closest.y(clamp(yExtent, -yExtent, closest.y()));
+
+		boolean inside = false;
+
+		// Circle is inside the AABB, so we need to clamp the circle's center
+		// to the closest edge
+		if (n.equals(closest)) {
+			inside = true;
+
+			// Find closest axis
+			if (Math.abs(n.x()) > Math.abs(n.y())) {
+				// Clamp to closest extent
+				if (closest.x() > 0) {
+					closest.x(xExtent);
+				} else {
+					closest.x(-xExtent);
+				}
+			}
+
+			// y axis is shorter
+			else {
+				// Clamp to closest extent
+				if (closest.y() > 0) {
+					closest.y(yExtent);
+				} else {
+					closest.y(-yExtent);
+				}
+			}
+		}
+
+		Point normal = new Point(n).sub(closest);
+		double d = normal.lengthSquarred();
+		double r = b.rad();
+
+		// Early out of the radius is shorter than distance to closest point and
+		// Circle not inside the AABB
+		if (d > r * r && !inside)
+			return false;
+
+		// Avoided sqrt until we needed
+		d = Math.sqrt(d);
+
+		// Collision normal needs to be flipped to point outside if circle was
+		// inside the AABB
+		if (inside) {
+			m.normal = new Point(n).mult(-1);
+			m.penetration = r - d;
+		} else {
+			m.normal = n;
+			m.penetration = r - d;
+		}
+
+		if (amin.x() < bCenter.x() && bCenter.x() < amax.x() || amin.y() < bCenter.y() && bCenter.y() < amax.y()) {
+			m.normal.oneLibDegNorm();
+		} else {
+			m.normal.trigNorm();
+		}
+		return true;
+	}
+
 	public static void colAndReact(Manifold m) {
 		if (isInCollision(m)) {
 			collide(m);
@@ -60,7 +140,7 @@ public class ColDetect {
 	}
 
 	public static boolean colCirclevsCircle(Circle a, Circle b, Manifold m) {
-		Point n = new Point(b.pos()).sub(a.pos());
+		Point n = new Point(b.getCenter()).sub(a.getCenter());
 
 		double r = a.rad() + b.rad();
 
@@ -101,9 +181,12 @@ public class ColDetect {
 		case 101:
 			return colAABBvsAABB((AABB) ha, (AABB) hb, m);
 		case 102:
-			break;
+			return colAABBvsCircle((AABB) ha, (Circle) hb, m);
 		case 201:
-			break;
+			Objet tmp = m.a;
+			m.a = m.b;
+			m.b = tmp;
+			return colAABBvsCircle((AABB) hb, (Circle) ha, m);
 		case 202:
 			return colCirclevsCircle((Circle) ha, (Circle) hb, m);
 		}

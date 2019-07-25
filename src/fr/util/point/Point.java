@@ -161,6 +161,21 @@ public class Point {
 		return this;
 	}
 
+	public void oneLibDegNorm() {
+		this.trigNorm();
+
+		double ax = Math.abs(this.x);
+		double ay = Math.abs(this.y);
+
+		if (ax > ay) {
+			this.x /= ax;
+			this.y = 0;
+		} else if (ax < ay) {
+			this.x = 0;
+			this.y /= ay;
+		}
+	}
+
 	/**
 	 * Pivote le vecteur de x degres en radian (sens horaire)
 	 */

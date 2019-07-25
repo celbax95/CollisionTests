@@ -4,21 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import fr.col.AABB;
+import fr.col.Circle;
 import fr.util.point.Point;
 
 public class Rock extends Objet {
 
-	private AABB personalHitbox;
+	private Circle personalHitbox;
 
-	private Point size;
+	private double rad;
 
 	public Color color;
 
 	public Rock() {
 		super();
 		this.color = Color.white;
-		this.size = new Point();
 	}
 
 	public void defaultInit() {
@@ -28,13 +27,10 @@ public class Rock extends Objet {
 		this.pos.set(new Point(50 + (int) (r.nextDouble() * 1250), 50 + (int) (r.nextDouble() * 650)));
 		this.pos.set(new Point(500, 500));
 		this.speed = 0;
-		this.size = new Point(150, 150);
+		this.rad = 40;
 		this.color = Color.DARK_GRAY;
 
-		Point padding = new Point(1, 1);
-
-		this.personalHitbox = new AABB(this.pos, new Point(this.pos).add(padding),
-				new Point(this.pos).add(this.size).sub(new Point(padding).mult(2)));
+		this.personalHitbox = new Circle(this.pos, this.pos, this.rad);
 
 		this.hitbox = this.personalHitbox;
 		this.dir.set(new Point(1, 0));
@@ -44,7 +40,10 @@ public class Rock extends Objet {
 	@Override
 	public void draw(Graphics2D g) {
 		g.setColor(this.color);
-		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
+
+		int radmult2 = (int) (this.rad * 2);
+		int radint = (int) this.rad;
+		g.fillOval(this.pos.ix() - radint, this.pos.iy() - radint, radmult2, radmult2);
 		this.personalHitbox.draw(g);
 	}
 
@@ -55,7 +54,7 @@ public class Rock extends Objet {
 		return this.color;
 	}
 
-	public AABB getPersonalHitbox() {
+	public Circle getPersonalHitbox() {
 		return this.personalHitbox;
 	}
 
@@ -75,7 +74,7 @@ public class Rock extends Objet {
 		this.color = color;
 	}
 
-	public void setPersonalHitbox(AABB personalHitbox) {
+	public void setPersonalHitbox(Circle personalHitbox) {
 		super.setHitbox(personalHitbox);
 		this.personalHitbox = personalHitbox;
 	}
