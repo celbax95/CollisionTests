@@ -10,7 +10,9 @@ import fr.appli.scitem.objet.Objet;
 import fr.appli.scitem.objet.player.PlayerRect;
 import fr.appli.scitem.objet.rock.RockCircle;
 import fr.appli.scitem.objet.rock.RockRect;
+import fr.col.AABB;
 import fr.col.Circle;
+import fr.main.Main;
 import fr.screen.ScreenApp;
 import fr.util.point.Point;
 
@@ -77,6 +79,16 @@ public class Appli implements ScreenApp {
 			collider.add(r1);
 			this.lsci.add(r1);
 		}
+
+		RockRect rr = new RockRect();
+		rr.defaultInit();
+		rr.setPos(new Point(100, Main.HEIGHT - 100));
+		rr.setSize(new Point(Main.WIDTH - 100, 20));
+		rr.setPersonalHitbox(new AABB(rr.getPos(), rr.getPos(), new Point(rr.getPos()).add(rr.getSize())));
+		rr.setMass(0);
+		rr.setColor(new Color(200, 100, 50));
+		collider.add(rr);
+		this.lsci.add(rr);
 
 		new CollisionTester(collider);
 
