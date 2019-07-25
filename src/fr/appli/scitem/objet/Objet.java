@@ -29,10 +29,10 @@ public abstract class Objet implements SCItem {
 		this.pos = new Point();
 		this.dir = new Point();
 		this.myThread = null;
-		this.restitution = 1.2; // 1 is no bounce
+		this.restitution = 1; // 1 is no bounce
 		this.setMass(5000);
 		this.speed = 0;
-		this.hitbox = new AABB(new Point(0, 0), new Point(0, 0));
+		this.hitbox = new AABB(this.pos, new Point(0, 0), new Point(0, 0));
 	}
 
 	@Override

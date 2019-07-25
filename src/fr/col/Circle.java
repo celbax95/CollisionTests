@@ -1,5 +1,7 @@
 package fr.col;
 
+import java.awt.Graphics2D;
+
 import fr.util.point.Point;
 
 public class Circle extends HitboxElement {
@@ -12,6 +14,14 @@ public class Circle extends HitboxElement {
 		super();
 		this.pos = pos;
 		this.rad = rad;
+	}
+
+	@Override
+	public void draw(Graphics2D g) {
+		int radD2 = (int) (this.rad / 2);
+		int radM2 = (int) (this.rad * 2);
+		g.setColor(this.COLOR);
+		g.drawOval(this.pos.ix() - radD2, this.pos.iy() - radD2, radM2, radM2);
 	}
 
 	@Override

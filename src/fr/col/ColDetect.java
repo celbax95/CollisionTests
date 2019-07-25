@@ -5,11 +5,14 @@ import fr.util.point.Point;
 
 public class ColDetect {
 
-	public static boolean colAABBvsAABB(AABB a, AABB b, Manifold m) {
-		Point n = new Point(b.min()).sub(a.min());
+	static int cpt = 0;
 
-		double aExtent = (a.max().x() - a.max().x()) / 2;
-		double bExtent = (b.max().x() - b.max().x()) / 2;
+	public static boolean colAABBvsAABB(AABB a, AABB b, Manifold m) {
+
+		Point n = new Point(b.getCenter()).sub(a.getCenter());
+
+		double aExtent = (a.max().x() - a.min().x()) / 2;
+		double bExtent = (b.max().x() - b.min().x()) / 2;
 
 		// Calculate overlap on x axis
 		double xOverlap = aExtent + bExtent - Math.abs(n.x());
@@ -26,12 +29,12 @@ public class ColDetect {
 			// SAT test on y axis
 			if (yOverlap > 0) {
 				// Find out which axis is axis of least penetration
-				if (xOverlap > yOverlap) {
+				if (xOverlap < yOverlap) {
 					// Point towards B knowing that n points from A to B
 					if (n.x() < 0) {
 						m.normal = new Point(-1, 0);
 					} else {
-						m.normal = new Point(0, 0);
+						m.normal = new Point(1, 0);
 					}
 					m.penetration = xOverlap;
 					return true;
@@ -96,7 +99,7 @@ public class ColDetect {
 
 		switch (type) {
 		case 101:
-			break;
+			return colAABBvsAABB((AABB) ha, (AABB) hb, m);
 		case 102:
 			break;
 		case 201:
@@ -111,7 +114,7 @@ public class ColDetect {
 		Objet a = m.a;
 		Objet b = m.b;
 
-		double percent = 0.3; // usually 20% to 80%
+		double percent = 0.2; // usually 20% to 80%
 		double slop = 0.01; // usually 0.01 to 0.1
 		Point correction = new Point(m.normal)
 				.mult(Math.max(m.penetration - slop, 0d) / (a.getMassinv() + b.getMassinv()) * percent);

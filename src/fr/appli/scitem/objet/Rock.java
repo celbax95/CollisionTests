@@ -4,44 +4,48 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import fr.col.Circle;
+import fr.col.AABB;
 import fr.util.point.Point;
 
 public class Rock extends Objet {
 
-	private Circle personalHitbox;
+	private AABB personalHitbox;
+
+	private Point size;
 
 	public Color color;
 
 	public Rock() {
 		super();
-		this.personalHitbox = new Circle(new Point(), 0d);
 		this.color = Color.white;
+		this.size = new Point();
 	}
 
 	public void defaultInit() {
 
 		Random r = new Random();
 
-		double mutationRate = 1.3;
-
-		double mutation = 0.8 + (r.nextDouble() * mutationRate - mutationRate / 2);
-
 		this.pos.set(new Point(50 + (int) (r.nextDouble() * 1250), 50 + (int) (r.nextDouble() * 650)));
+		this.pos.set(new Point(500, 500));
 		this.speed = 0;
+		this.size = new Point(150, 150);
 		this.color = Color.DARK_GRAY;
-		this.personalHitbox = new Circle(this.pos, 45 * mutation);
+
+		Point padding = new Point(1, 1);
+
+		this.personalHitbox = new AABB(this.pos, new Point(this.pos).add(padding),
+				new Point(this.pos).add(this.size).sub(new Point(padding).mult(2)));
+
 		this.hitbox = this.personalHitbox;
 		this.dir.set(new Point(1, 0));
-		this.setMass(5000 * mutation * 1.8);
+		this.setMass(5000);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		int raddiv2 = (int) this.personalHitbox.rad();
-		int radmult2 = (int) (this.personalHitbox.rad() * 2);
 		g.setColor(this.color);
-		g.fillOval(this.pos.ix() - raddiv2, this.pos.iy() - raddiv2, radmult2, radmult2);
+		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
+		this.personalHitbox.draw(g);
 	}
 
 	/**
@@ -51,19 +55,16 @@ public class Rock extends Objet {
 		return this.color;
 	}
 
-	public Circle getPersonalHitbox() {
+	public AABB getPersonalHitbox() {
 		return this.personalHitbox;
 	}
 
 	private void inputs() {
-		System.out.println(this.dir);
 		this.dir.rotate(0.02);
-		System.out.println(this.dir);
 	}
 
 	private void move(double time) {
 		this.pos.add(new Point(this.dir).mult(this.speed).mult(time));
-
 		this.speed *= 1 - 10 * time;
 	}
 
@@ -74,7 +75,7 @@ public class Rock extends Objet {
 		this.color = color;
 	}
 
-	public void setPersonalHitbox(Circle personalHitbox) {
+	public void setPersonalHitbox(AABB personalHitbox) {
 		super.setHitbox(personalHitbox);
 		this.personalHitbox = personalHitbox;
 	}

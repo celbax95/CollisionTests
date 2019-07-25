@@ -1,19 +1,43 @@
 package fr.col;
 
+import java.awt.Graphics2D;
+
 import fr.util.point.Point;
 
 public class AABB extends HitboxElement {
 
-	private Point min;
+	Point ref;
 
-	private Point max;
+	private Point vectMax;
+	private Point vectMin;
 
-	private Point vectMinMax;
+	public AABB(Point ref, Point min, Point max) {
 
-	public AABB(Point min, Point max) {
-		this.min = min;
-		this.max = max;
-		this.vectMinMax = new Point(max).sub(min);
+		this.ref = ref;
+
+		this.vectMin = new Point(min).sub(ref);
+		this.vectMax = new Point(max).sub(ref);
+	}
+
+	@Override
+	public void draw(Graphics2D g) {
+		g.setColor(this.COLOR);
+
+		Point mtm = this.minToMax();
+
+		g.fillRect(this.min().ix(), this.min().iy(), mtm.ix(), mtm.iy());
+	}
+
+	public Point getCenter() {
+		return this.min().add(this.getSize().div(2));
+	}
+
+	public double getHeight() {
+		return this.getSize().y();
+	}
+
+	public Point getSize() {
+		return this.max().sub(this.min());
 	}
 
 	@Override
@@ -21,23 +45,46 @@ public class AABB extends HitboxElement {
 		return 1;
 	}
 
+	/**
+	 * @return the vectMinMax
+	 */
+	public Point getVectMinMax() {
+		return this.vectMax;
+	}
+
+	public double getWidth() {
+		return this.getSize().x();
+	}
+
 	public Point max() {
-		return this.max;
+		return new Point(this.ref).add(this.vectMax);
 	}
 
 	public void max(Point max) {
-		this.max = max;
+		this.vectMax = new Point(max).sub(this.ref);
 	}
 
 	public Point min() {
-		return this.min;
+		return new Point(this.ref).add(this.vectMin);
 	}
 
 	public void min(Point min) {
-		this.min = min;
+		this.vectMin = new Point(min).sub(this.ref);
 	}
 
-	public void updateMax() {
-		this.max.set(new Point(this.min).add(this.vectMinMax));
+	private Point minToMax() {
+		return this.max().sub(this.min());
+	}
+
+	/**
+	 * @param vectMinMax the vectMinMax to set
+	 */
+	public void setVectMinMax(Point vectMinMax) {
+		this.vectMax = vectMinMax;
+	}
+
+	@Override
+	public String toString() {
+		return "ref = " + this.ref + "\nmin = " + this.min() + "\nmax = " + this.max();
 	}
 }
