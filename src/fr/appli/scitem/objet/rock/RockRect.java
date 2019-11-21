@@ -21,10 +21,7 @@ public class RockRect extends Rock {
 		super.defaultInit();
 		this.size = new Point(80, 80);
 		this.color = Color.DARK_GRAY;
-		Point padding = new Point(1, 1);
-
-		this.personalHitbox = new AABB(this.pos, new Point(this.pos).add(padding),
-				new Point(this.pos).add(this.size).sub(new Point(padding).mult(2)));
+		this.personalHitbox = new AABB(this.pos, new Point(this.pos), new Point(this.pos).add(this.size));
 		this.hitbox = this.personalHitbox;
 		this.setMass(5000);
 	}

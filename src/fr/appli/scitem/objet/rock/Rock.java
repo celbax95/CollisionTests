@@ -25,7 +25,7 @@ public abstract class Rock extends Objet {
 		this.speed = 0;
 		this.color = Color.DARK_GRAY;
 
-		this.dir.set(new Point(1, 0));
+		this.dir.set(new Point(0, 0));
 		this.setMass(5000);
 	}
 
